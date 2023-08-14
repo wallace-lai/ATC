@@ -1,2 +1,2 @@
-# leetcode-go
-practice leetcode using golang
+# leetcode-solution
+leetcode practice
