@@ -11,10 +11,44 @@
 #include <unordered_set>
 using namespace std;
 
+// class MyStack {
+// private:
+//     queue<int> main;
+//     queue<int> backup;
+
+// public:
+//     MyStack() {
+
+//     }
+    
+//     void push(int x) {
+//         backup.push(x);
+//         while (!main.empty()) {
+//             backup.push(main.front());
+//             main.pop();
+//         }
+
+//         swap(main, backup);
+//     }
+    
+//     int pop() {
+//         int ret = main.front();
+//         main.pop();
+//         return ret;
+//     }
+    
+//     int top() {
+//         return main.front();
+//     }
+    
+//     bool empty() {
+//         return main.empty();
+//     }
+// };
+
 class MyStack {
 private:
-    queue<int> main;
-    queue<int> backup;
+    queue<int> q;
 
 public:
     MyStack() {
@@ -22,27 +56,27 @@ public:
     }
     
     void push(int x) {
-        backup.push(x);
-        while (!main.empty()) {
-            backup.push(main.front());
-            main.pop();
+        size_t len = q.size();
+        q.push(x);
+        for (size_t i = 0; i < len; i++) {
+            int curr = q.front();
+            q.pop();
+            q.push(curr);
         }
-
-        swap(main, backup);
     }
     
     int pop() {
-        int ret = main.front();
-        main.pop();
+        int ret = q.front();
+        q.pop();
         return ret;
     }
     
     int top() {
-        return main.front();
+        return q.front();
     }
     
     bool empty() {
-        return main.empty();
+        return q.empty();
     }
 };
 
