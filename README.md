@@ -1,2 +1,3 @@
 # ATC
-algorithm training camp
+
+algorithms training camp
