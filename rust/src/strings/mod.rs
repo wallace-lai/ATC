@@ -72,7 +72,6 @@ pub mod leetcode_2269;
 pub mod leetcode_2278;
 pub mod leetcode_2299;
 pub mod leetcode_2315;
-pub mod leetcode_2379;
 pub mod leetcode_2409;
 pub mod leetcode_2437;
 pub mod leetcode_2490;
