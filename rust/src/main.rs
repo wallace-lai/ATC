@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 mod arrays;
+mod data_structure;
 mod graph;
 mod hard;
 mod hash_table;
