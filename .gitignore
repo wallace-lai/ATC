@@ -1,3 +1,4 @@
 /.vscode
+/ahead
 /rust/target
 *.out
