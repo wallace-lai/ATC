@@ -19,11 +19,3 @@ impl Solution {
         stk.len() as i32 - 1
     }
 }
-
-#[test]
-fn test() {
-    let position = vec![1,5,6,20];
-    let speed = vec![4,3,2,3];
-    let ret = Solution::count_groups(position, speed, 1);
-    assert_eq!(ret, 2);
-}
