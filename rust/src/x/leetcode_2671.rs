@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::collections::hash_map::Entry;
 
 struct FrequencyTracker {
     // add 会使得数字的频率增加
@@ -9,6 +8,7 @@ struct FrequencyTracker {
     group: HashMap<i32, i32>        // 频率 --> 该频率下的元素个数
 }
 
+// 43ms，击败100%
 impl FrequencyTracker {
     fn new() -> Self {
         Self {
@@ -17,42 +17,25 @@ impl FrequencyTracker {
         }
     }
     
-    fn add(&mut self, val: i32) {
-        // 原频率的元素个数减1
+    // 频率改变时需要同时更新
+    fn update(&mut self, val: i32, d: i32) {
         let f = self.freq.entry(val).or_insert(0);
-        if *f > 0 {
-            *self.group.get_mut(f).unwrap() -= 1;
-        }
+        *self.group.entry(*f).or_insert(0) -= 1;
+        *f += d;
+        *self.group.entry(*f).or_insert(0) += 1;
+    }
 
-        // 频率增加，对应频率的元素个数加1
-        *f += 1;
-        let f = *f;
-        *self.group.entry(f).or_insert(0) += 1;
+    fn add(&mut self, val: i32) {
+        self.update(val, 1);
     }
     
     fn delete_one(&mut self, val: i32) {
-        // 结构中存在val时才处理
-        if let Entry::Occupied(mut e) = self.freq.entry(val) {
-            let f = e.get_mut();
-            // 修改对应频率元素个数
-            *self.group.get_mut(f).unwrap() -= 1;
-            if *f > 1 {
-                *self.group.get_mut(&(*f - 1)).unwrap() += 1;
-            }
-    
-            *f -= 1;
-            if *f == 0 { e.remove(); }
+        if *self.freq.get(&val).unwrap_or(&0) > 0 {
+            self.update(val, -1);
         }
     }
     
     fn has_frequency(&mut self, frequency: i32) -> bool {
-        let ans = 
-            match self.group.get(&frequency) {
-                Some(num) => {
-                    if *num > 0 { true } else { false }
-                },
-                None => { false }
-            };
-        ans
+        *self.group.get(&frequency).unwrap_or(&0) > 0
     }
 }
