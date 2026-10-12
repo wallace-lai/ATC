@@ -5,6 +5,7 @@ mod data_structure;
 mod graph;
 mod hard;
 mod hash_table;
+mod interview;
 mod lcp;
 mod lcr;
 mod lcs;
