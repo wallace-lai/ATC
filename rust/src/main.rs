@@ -3,6 +3,7 @@
 mod arrays;
 mod data_structure;
 mod graph;
+mod greedy;
 mod hard;
 mod hash_table;
 mod interview;
