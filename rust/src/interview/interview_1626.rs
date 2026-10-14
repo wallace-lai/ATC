@@ -87,7 +87,7 @@ impl Solution {
             }
         }
 
-        while let Some(&op) = ops.last() {
+        while let Some(_) = ops.last() {
             apply_op(&mut ops, &mut nums);
         }
         if nums.len() != 1 {

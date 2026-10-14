@@ -1,7 +1,7 @@
 struct Solution;
 
 impl Solution {
-    pub fn max_sum_of_squares(mut num: i32, mut sum: i32) -> String {
+    pub fn max_sum_of_squares(num: i32, mut sum: i32) -> String {
         if sum > num * 9 { return "".to_string(); }
         let mut v = vec![b'0'; num as usize];
 
