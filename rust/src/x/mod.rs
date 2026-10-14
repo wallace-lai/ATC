@@ -10,7 +10,6 @@ pub mod leetcode_1401;
 pub mod leetcode_1510;
 pub mod leetcode_1807;
 pub mod leetcode_2080;
-pub mod leetcode_2091;
 pub mod leetcode_2333;
 pub mod leetcode_2472;
 pub mod leetcode_2671;
