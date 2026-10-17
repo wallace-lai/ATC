@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 mod arrays;
+mod bitwise;
 mod data_structure;
 mod graph;
 mod greedy;
