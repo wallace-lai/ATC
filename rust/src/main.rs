@@ -12,6 +12,7 @@ mod lcp;
 mod lcr;
 mod lcs;
 mod linked_list;
+mod math;
 mod strings;
 mod trees;
 mod two_points;
