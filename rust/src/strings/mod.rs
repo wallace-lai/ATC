@@ -118,6 +118,7 @@ pub mod leetcode_3798;
 pub mod leetcode_3813;
 pub mod leetcode_3828;
 pub mod leetcode_3856;
+pub mod leetcode_3863;
 pub mod leetcode_3884;
 pub mod leetcode_3894;
 pub mod leetcode_3931;
