@@ -10,8 +10,8 @@ struct TripleInOne {
  */
 impl TripleInOne {
 
-    fn new(stackSize: i32) -> Self {
-        let size = stackSize as usize;
+    fn new(stack_size: i32) -> Self {
+        let size = stack_size as usize;
         Self {
             // 三个栈的top值保存在数组末尾
             // 定位top值：stack_size * 3 + i
