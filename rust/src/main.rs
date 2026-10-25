@@ -5,6 +5,7 @@ mod bitwise;
 mod data_structure;
 mod graph;
 mod greedy;
+mod grid;
 mod hard;
 mod hash_table;
 mod interview;
