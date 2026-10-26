@@ -1,5 +1,84 @@
 # 网格图
 
+## DFS 模板
+
+两种DFS的选择策略：
+
+- 连通性/可达性 DFS - 可用递归也可用迭代
+  - 网格岛屿
+  - 图遍历
+  - 判断可达性
+
+- 回溯式 DFS - 几乎永远用递归
+  - 全排列
+  - N皇后
+  - 路径枚举
+
+### 1. 迭代 DFS 模板
+
+网格类：
+
+```rust
+/// 模板：遍历 (x, y) 所在的 4 连通陆地岛屿
+/// grid：原地修改作为 visited 数组使用，0 表示水域或者已访问
+fn dfs_grid(grid: &mut Vec<Vec<i32>>, x: usize, y: usize) {
+    let m = grid.len();
+    let n = grid[0].len();
+
+    // 入栈前就标记
+    grid[x][y] = 0;
+
+    let mut stk = vec![(x, y)];
+
+    while let Some((x, y)) = stk.pop() {
+        // 在这里处理当前节点
+        // 例如：统计、比较、收集路径等
+
+        for (dx, dy) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+            let nx = x as i32 + dx;
+            let ny = y as i32 + dy;
+            
+            // 越界
+            if nx < 0 || nx >= m as i32 || ny < 0 || ny >= n as i32 {
+                continue;
+            }
+
+            let (nx, ny) = (nx as usize, ny as usize);
+            if grid[nx][ny] == 1 {
+                grid[nx][ny] = 0;   // 入栈前标记
+                stk.push((nx, ny));
+            }
+        }
+    }
+}
+```
+
+邻接表类：
+
+```rust
+fn dfs_graph(graph: &Vec<Vec<usize>>, start: usize) -> Vec<usize> {
+    let n = graph.len();
+    let mut order = Vec::new();
+    let mut visited = vec![false; n];
+
+    visited[start] = true;
+    let mut stk = vec![start];
+
+    while let Some(u) = stk.pop() {
+        order.push(u);  // 存储遍历顺序
+
+        for &v in &graph[u] {
+            if !visited[v] {
+                visited[v] = true;  // 入栈前标记
+                stk.push(v);
+            }
+        }
+    }
+
+    order
+}
+```
+
 ## 一、连通块的个数
 
 ### 1.1 DFS + 边界标记法
