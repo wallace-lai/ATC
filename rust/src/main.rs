@@ -3,6 +3,7 @@
 mod arrays;
 mod bitwise;
 mod data_structure;
+mod dp;
 mod graph;
 mod greedy;
 mod grid;
