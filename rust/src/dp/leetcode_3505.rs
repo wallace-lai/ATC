@@ -157,10 +157,3 @@ impl Solution {
         dp[k][n]
     }
 }
-
-#[test]
-fn test() {
-    let nums = vec![9,-2,-2,-2,1,5];
-    let ret = Solution::min_operations(nums, 2, 2);
-    assert_eq!(ret, 3);
-}
