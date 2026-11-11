@@ -1,6 +1,7 @@
 struct Solution;
 
 impl Solution {
+    #[cfg(any())]
     pub fn longest_monotonic_subarray(nums: Vec<i32>) -> i32 {
         let n = nums.len();
         let checker = |beg: usize, end: usize| -> bool {
@@ -32,5 +33,31 @@ impl Solution {
         }
 
         unreachable!()
+    }
+
+    pub fn longest_monotonic_subarray(nums: Vec<i32>) -> i32 {
+        let n = nums.len();
+
+        let mut i = 0;
+        let mut ans = 1;
+        while i < n - 1 {
+            if nums[i + 1] == nums[i] {
+                i += 1;
+                continue;
+            }
+
+            let j = i;
+            let inc = nums[i + 1] > nums[i];
+            i += 2;
+            while i < n && nums[i] != nums[i - 1] && ((nums[i] > nums[i - 1]) == inc) {
+                i += 1;
+            }
+
+            ans = ans.max(i - j);
+            i -= 1;
+        }
+    
+
+        ans as i32
     }
 }
