@@ -24,7 +24,7 @@ fn binary_search(nums: &Vec<i32>, t: i32) -> i32 {
 
 对于左闭右开区间`[left, right)`：
 
-### 找到第一个满足条件的位置
+### 找到第一个满足条件的位置（伪代码）
 
 ```rust
 // 左闭右开区间
@@ -46,21 +46,19 @@ return left;
 ### 找到第一个`>= t`的位置 - `lower_bound()`
 
 ```rust
-fn lower_bound(nums: &Vec<i32>, t: i32) -> i32 {
+// 找到第一个 >=t 的位置
+fn lower_bound(nums: &[i32], t: i32) -> usize {
     // 左闭右开区间
-    let mut left = 0;
-    let mut right = nums.len();
-
-    while left < right {
-        let mid = left + (right - left) / 2;
+    let (mut l, mut r) = (0, nums.len());
+    while l < r {
+        let mid = l + (r - l) / 2;
         if nums[mid] >= t {
-            right = mid;        // mid可能是答案，但还需往前找
+            r = mid;        // mid可能是答案，但还需往前找
         } else {
-            left = mid + 1;     // mid和左边都不满足 >= t
+            l = mid + 1;    // mid和左边都不满足 >= t
         }
     }
-
-    left    // left == nums.len()时，表示不存在
+    l   // l == nums.len()时，表示 >=t 位置不存在
 }
 ```
 

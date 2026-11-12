@@ -1,4 +1,7 @@
 /.vscode
 /ahead
+/mthread/target
+/mthread/Cargo.lock
 /rust/target
+/rust/Cargo.lock
 *.out

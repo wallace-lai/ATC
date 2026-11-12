@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 mod arrays;
+mod binary_search;
 mod bitwise;
 mod data_structure;
 mod dp;
