@@ -84,7 +84,7 @@ impl Solution {
     }
 
     // 法二：直接遍历统计
-    pub fn count_servers(mut grid: Vec<Vec<i32>>) -> i32 {
+    pub fn count_servers(grid: Vec<Vec<i32>>) -> i32 {
         let m = grid.len();
         let n = grid[0].len();
         let mut row_cnt = vec![0; m];
