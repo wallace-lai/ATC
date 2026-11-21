@@ -299,3 +299,209 @@ fn build_bst(nums: &[i32]) -> Option<Rc<RefCell<TreeNode>>> {
 }
 ```
 
+# 三、回溯
+
+## 3.1 排列问题
+
+### 生成所有排列（序列不含重复数字）
+
+```rust
+/// nums为原始序列
+/// ans存储生成的排列
+/// nums[0..=k-1]范围内为已选择的数，nums[k..]范围内是还未被选择的数
+fn backtrack(nums: &mut Vec<i32>, k: usize, ans: &mut Vec<Vec<i32>>) {
+    // 所有的数都填充完毕
+    if k == nums.len() {
+        ans.push(nums.clone());
+        return;
+    }
+
+    // nums[k..]范围内是还未选的数，从其中选择一个数填充到nums[k]中
+    for i in k..nums.len() {
+        // 选择下标i处的数填充
+        nums.swap(k, i);
+        backtrack(nums, k + 1, ans);
+        // 撤销选择
+        nums.swap(k, i);
+    }
+}
+```
+
+### 生成所有排列（序列包含重复数字）
+
+```rust
+// nums 必须已经排序，去重才能成功
+fn backtrack(nums: &[i32], used: &mut [bool], path: &mut Vec<i32>, ans: &mut Vec<Vec<i32>>) {
+    if path.len() == nums.len() {
+        ans.push(path.clone());
+        return;
+    }
+
+    for i in 0..nums.len() {
+        if used[i] { continue; }
+        // 树层去重：同层元素只取第一个
+        if i > 0 && nums[i] == nums[i - 1] && !used[i - 1] { continue; }
+
+        used[i] = true;
+        path.push(nums[i]);
+        backtrack(nums, used, path, ans);
+        path.pop();
+        used[i] = false;
+    }
+}
+```
+
+### `next_permutation`算法
+
+`next_permutation` 算法本身就不需要额外去重，只要初始序列排序一次即可
+
+```rust
+// nums 必须为已排序后的字典序最小序列
+fn next_permutation(nums: &mut [i32]) -> bool {
+    let n = nums.len();
+    if n < 2 { return false; }
+
+    // 从右往左找第一个升序对 a[i - 1] < a[i]
+    // 用 >= 而不是 >：重复元素之间不构成升序关系，必须继续往左找
+    let mut i = n - 1;
+    while i > 0 && nums[i - 1] >= nums[i] { i -= 1; }
+    if i == 0 { return false; } // 已经是完全降序，最后一个排列
+
+    // 从右往左找第一个严格大于 a[i - 1] 的数
+    // 用 <= 而不是 <：跳过相等元素，交换才不会“原地踏步”
+    let mut j = n - 1;
+    while nums[j] <= nums[i - 1] { j -= 1; }
+
+    // 交换后，将后缀翻转成最小（升序）
+    nums.swap(i - 1, j);
+    nums[i..].reverse();
+    true
+}
+```
+
+## 3.2 子集问题
+
+### 生成所有子集（序列不含重复数字）
+
+#### 法一：回溯
+
+```rust
+// 时间复杂度：O(n * 2^n)
+// 空间复杂度：O(n)
+fn dfs(nums: &[i32], curr: usize, t: &mut Vec<i32>, ans: &mut Vec<Vec<i32>>) {
+    if curr == nums.len() {
+        ans.push(t.clone());
+        return;
+    }
+
+    // 选
+    t.push(nums[curr]);
+    dfs(nums, curr + 1, t, ans);
+    t.pop();
+
+    // 不选
+    dfs(nums, curr + 1, t, ans);
+}
+```
+
+#### 法二：二进制位迭代（nums.len() < 32）
+
+```rust
+// 法二：二进制位迭代，nums.len() < 32
+// 时间复杂度：O(n * 2^n)
+// 空间复杂度：O(n)
+pub fn subsets(nums: Vec<i32>) -> Vec<Vec<i32>> {
+    let n = nums.len();
+    let mut t = Vec::with_capacity(n);
+    let mut ans = Vec::with_capacity(2usize.pow(n as u32));
+
+    for mask in 0..(1usize << n) {
+        t.clear();
+        for i in 0..n {
+            if (mask & (1usize << i)) != 0 {
+                t.push(nums[i]);
+            }
+        }
+        ans.push(t.clone());
+    }
+
+    ans
+}
+```
+
+### 生成所有子集（序列含重复数字）
+
+#### 法一：回溯
+
+```rust
+// nums 必须是已排序的序列
+fn dfs(nums: &[i32], mut i: usize, t: &mut Vec<i32>, ans: &mut Vec<Vec<i32>>) {
+    if i == nums.len() {
+        ans.push(t.clone());
+        return;
+    }
+
+    // 把相同元素看成一组，比如 nums = [1, 1, 1, 2]，一个
+    // 子集真正关心的是：选0个、1个、2个还是3个1，而不关心选
+    // 的是第几个1
+
+    // 当前的这个 x 已经选了，接下来考虑后面的元素。后面相同
+    // 的 x 还可以继续选，用来表示选2个、3个相同的元素
+
+    // 如果当前的这个 x 不选，那么后面那些相同的 x 也不能通过
+    // 跳过当前，选后面的方式来选，否则会造成重复
+
+    // 选
+    let x = nums[i];
+    t.push(x);
+    dfs(nums, i + 1, t, ans);
+    t.pop();
+
+    // 不选
+    i += 1;
+    while i < nums.len() && nums[i] == x {
+        i += 1;
+    }
+    dfs(nums, i, t, ans);
+}
+```
+
+### 生成所有子集（通用解法）
+
+```rust
+// 通用解法，无论是否存在相同元素
+fn subsets_with_dup(mut nums: Vec<i32>) -> Vec<Vec<i32>> {
+    
+    fn dfs(g: &[(i32, usize)], i: usize, t: &mut Vec<i32>, ans: &mut Vec<Vec<i32>>) {
+        if i == g.len() {
+            ans.push(t.clone());
+            return;
+        }
+
+        let (v, c) = g[i];
+        // 对于这一组，选择 k 个，k 决定了从中选择多少个 v
+        for k in 0..=c {
+            let base = t.len();
+            t.extend(std::iter::repeat(v).take(k));
+            dfs(g, i + 1, t, ans);
+            t.truncate(base);
+        }
+    }
+
+    nums.sort_unstable();
+
+    // 分组：(值，出现次数)
+    let mut group: Vec<(i32, usize)> = Vec::new();
+    for &x in nums.iter() {
+        match group.last_mut() {
+            Some((v, c)) if *v == x => { *c += 1 },
+            _ => { group.push((x, 1)) },
+        }
+    }
+
+    let mut t = vec![];
+    let mut ans = vec![];
+    dfs(&group, 0, &mut t, &mut ans);
+    ans
+}
+```
