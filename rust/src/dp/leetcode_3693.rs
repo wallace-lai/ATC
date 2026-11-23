@@ -22,7 +22,7 @@ impl Solution {
     }
 
     // 法二：动态规划 + 空间优化
-    pub fn climb_stairs(n: i32, costs: Vec<i32>) -> i32 {
+    pub fn climb_stairs(_n: i32, costs: Vec<i32>) -> i32 {
         let (mut f0, mut f1, mut f2) = (0, 0, 0);
         for c in costs {
             let tmp = std::cmp::min(

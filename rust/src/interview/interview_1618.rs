@@ -13,7 +13,7 @@ impl Solution {
         let count_b = p.len() - count_a;
 
         // 让 c1 表示出现次数较多的字符
-        let (c1, count1, c2, count2) = if count_a > count_b {
+        let (c1, count1, _c2, count2) = if count_a > count_b {
             ('a', count_a, 'b', count_b)
         } else {
             ('b', count_b, 'a', count_a)

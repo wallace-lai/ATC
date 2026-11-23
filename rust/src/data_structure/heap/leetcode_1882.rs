@@ -36,7 +36,7 @@ impl Solution {
             release(&mut idle, &mut busy, now, &servers);
             // 如果此刻没有空闲服务器，则跳到 busy 的堆顶时刻
             if idle.is_empty() {
-                if let Some(Reverse((t, i))) = busy.peek().copied() {
+                if let Some(Reverse((t, _))) = busy.peek().copied() {
                     now = t;
                     release(&mut idle, &mut busy, now, &servers);
                 }
