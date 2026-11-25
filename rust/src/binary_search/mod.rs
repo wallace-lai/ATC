@@ -3,3 +3,4 @@ pub mod leetcode_0081;
 pub mod leetcode_0153;
 pub mod leetcode_0154;
 pub mod leetcode_0189;
+pub mod leetcode_3934;
