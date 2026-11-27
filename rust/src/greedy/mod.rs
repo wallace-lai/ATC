@@ -7,3 +7,4 @@ pub mod leetcode_2914;
 pub mod leetcode_3723;
 pub mod leetcode_3727;
 pub mod leetcode_3789;
+pub mod leetcode_3947;
