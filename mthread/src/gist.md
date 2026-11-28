@@ -201,7 +201,48 @@ atomic_compare_exchange_weak_explicit
 - memory_order_acq_rel
 - memory_order_seq_cst
 
-### 内存序补充
+
+### 屏障
+
+**`pthread` 屏障和内存序的关系：**屏障是一个强制的、粗粒度的内存同步原语。它不接收内存序参数，但其 POSIX 规范定义的语义，在实现上正是通过 acquire/release 内存序来达成的，从而在所有参与线程间建立起可靠的 happens-before 关系，保证屏障之前的内存操作对之后的所有线程可见。
+
+（1）创建
+
+```c
+int pthread_barrier_init(pthread_barrier_t *restrict barrier,
+    const pthread_barrierattr_t *restrict attr,
+    unsigned count);
+```
+
+- 创建一个屏障对象，并指定参与同步的线程数量 `count`；
+- 只有当 count 个线程都调用了 `pthread_barrier_wait` 后，所有线程才会被同时放行；
+
+（2）销毁
+
+```c
+int pthread_barrier_destroy(pthread_barrier_t *barrier);
+```
+- 释放屏障占用的资源；
+- 前提是没有任何线程正阻塞在该屏障上，否则行为未定义；
+- 销毁后，屏障对象可以被重新 `init` 复用；
+
+（2）在屏障上等待
+
+```c
+int pthread_barrier_wait(pthread_barrier_t *barrier);
+```
+
+- 调用此函数的线程会阻塞，直到等待的线程数达到初始化时指定的 `count`；
+- 此时，所有等待的线程会同时被唤醒并继续执行；
+
+这个函数的返回值有一个特殊设计：
+
+- 对于每一批被同步的 count 个线程，有且仅有一个线程会收到特殊返回值 PTHREAD_BARRIER_SERIAL_THREAD。
+
+- 其余所有线程的返回值为 0。
+
+这个机制通常用于让某个线程（收到特殊值的那个）在屏障后执行一次性的“串行”工作（如汇总结果），而其他线程继续并行。具体哪个线程收到该值是不确定的。
+
 
 # C11/POSIX 六种内存序详解
 
@@ -336,45 +377,3 @@ while (!atomic_exchange_explicit(&lock, 1, memory_order_acq_rel)) { /* spin */ }
 ### 💡 一个经典的心智模型
 
 把 `acquire` 想成"**读闸门向下开**"（后面的操作不能跑到前面），把 `release` 想成"**写闸门向上开**"（前面的操作不能跑到后面）。两者配对时，release 之前的所有写入，都会被 acquire 之后的所有读取所看到——这就是**happens-before** 关系的建立方式，也是所有无锁同步正确性的根基。
-
-### 屏障
-
-`pthread` 屏障和内存序的关系：屏障是一个强制的、粗粒度的内存同步原语。它不接收内存序参数，但其 POSIX 规范定义的语义，在实现上正是通过 acquire/release 内存序来达成的，从而在所有参与线程间建立起可靠的 happens-before 关系，保证屏障之前的内存操作对之后的所有线程可见。
-
-（1）创建
-
-```c
-int pthread_barrier_init(pthread_barrier_t *restrict barrier,
-    const pthread_barrierattr_t *restrict attr,
-    unsigned count);
-```
-
-- 创建一个屏障对象，并指定参与同步的线程数量 `count`；
-- 只有当 count 个线程都调用了 `pthread_barrier_wait` 后，所有线程才会被同时放行；
-
-（2）销毁
-
-```c
-int pthread_barrier_destroy(pthread_barrier_t *barrier);
-```
-- 释放屏障占用的资源；
-- 前提是没有任何线程正阻塞在该屏障上，否则行为未定义；
-- 销毁后，屏障对象可以被重新 `init` 复用；
-
-（2）在屏障上等待
-
-```c
-int pthread_barrier_wait(pthread_barrier_t *barrier);
-```
-
-- 调用此函数的线程会阻塞，直到等待的线程数达到初始化时指定的 `count`；
-- 此时，所有等待的线程会同时被唤醒并继续执行；
-
-这个函数的返回值有一个特殊设计：
-
-- 对于每一批被同步的 count 个线程，有且仅有一个线程会收到特殊返回值 PTHREAD_BARRIER_SERIAL_THREAD。
-
-- 其余所有线程的返回值为 0。
-
-这个机制通常用于让某个线程（收到特殊值的那个）在屏障后执行一次性的“串行”工作（如汇总结果），而其他线程继续并行。具体哪个线程收到该值是不确定的。
-
